@@ -1,0 +1,54 @@
+name: publish
+on: 
+    push:
+    release:
+        types: [published]
+env:
+    REGISTRY: ghcr.io
+    IMAGE_NAME: f1dz/karsajobs
+jobs:
+    publish-image:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v2
+            with:
+                submodules: recursive
+    
+          - name: Login to GitHub Container Registry
+            uses: docker/login-action@v1
+            with:
+              registry: ${{ env.REGISTRY }}
+              username: ${{ github.actor }}
+              password: ${{ secrets.GITHUB_TOKEN }}
+        
+          - name: lint-dockerfile
+            uses: hadolint/hadolint-action@v3.1.0
+            with:
+              dockerfile: Dockerfile
+          
+          - name: setup-go
+            uses: actions/setup-go@v4
+            with:
+              go-version: 1.14
+
+          - name: test-app
+            run: |
+              go test -v -short --count=1 $(go list ./...)
+
+          - name: Extract metadata (tags, labels) for Docker
+            id: meta
+            uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+            with:
+                images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+    
+          - name: build-app-karsajobs
+            uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+            with:
+                context: .
+                push: true
+                labels: ${{ steps.meta.outputs.labels }}
+                tags: ${{ steps.meta.outputs.tags }}, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest

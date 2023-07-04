@@ -1,0 +1,92 @@
+# API version
+apiVersion: apps/v1
+
+# Kind is a string value representing the REST resource this object represents
+# StatefulSet represents a set of pods with consistent identities
+kind: StatefulSet
+
+metadata:
+  # StatefulSet name
+  name: mongo
+  # StatefulSet namespace
+  namespace: karsajobs-ns
+  # Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services.
+  labels:
+    app: mongo
+
+spec:
+
+  # Label selector for pods
+  selector:
+    matchLabels:
+      app: mongo
+
+  # name of the service that governs this StatefulSet
+  serviceName: mongo
+
+  # Minimum number of seconds for which a newly created pod should be ready without any of its container crashing for it to be considered available.
+  minReadySeconds: 10
+
+  # Number of desired pods. This is a pointer to distinguish between explicit zero and not specified. Defaults to 1.
+  replicas: 1
+
+  # Template describes the pods that will be created.
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+
+      # Optional duration in seconds the pod needs to terminate gracefully.
+      terminationGracePeriodSeconds: 10
+
+      # List of containers belonging to the pod
+      containers:
+
+        # Name of the container
+      - name: mongo
+        # Image to be used for container. It will pull from Docker Hub
+        image: mongo:3
+        # Image pull policy. "IfNotPresent" means that kubelet pulls if the image isn't present on disk
+        imagePullPolicy: IfNotPresent
+        # List of environment variables to set in the container
+        env: 
+        - name: MONGO_INITDB_ROOT_USERNAME_FILE
+          value: /etc/mongo-credentials/MONGO_ROOT_USERNAME
+        - name: MONGO_INITDB_ROOT_PASSWORD_FILE
+          value: /etc/mongo-credentials/MONGO_ROOT_PASSWORD
+
+        # List of environment variables to set in the container
+        ports:
+        # Number of port to expose on the pod's IP address
+        - containerPort: 27017
+          name: mongo
+        # Pod volumes to mount into the container's filesystem
+        volumeMounts:
+        - name: mongo-persistent-storage
+          mountPath: /data/db
+        - name: mongo-config
+          mountPath: /config
+        - name: mongo-secret
+          mountPath: /etc/mongo-credentials
+
+      # List of volumes that can be mounted by containers belonging to the pod.
+      volumes:
+      # Name of the volume as described on "volumeMounts"
+      - name: mongo-persistent-storage
+        # Reference to a PersistentVolumeClaim in the same namespace.
+        persistentVolumeClaim:
+          # Name of a PersistentVolumeClaim in the same namespace as the pod using this volume
+          claimName: mongo-pv-claim
+      - name: mongo-config
+        # Represents a configMap that should populate this volume
+        configMap:
+          name: mongo-config
+          items: 
+            - key: mongo.conf
+              path: mongo.conf
+      - name: mongo-secret
+        # Represents a secret that should populate this volume.
+        secret:
+          secretName: mongo-secret
+

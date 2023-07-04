@@ -1,0 +1,26 @@
+# API version
+apiVersion: v1
+
+# Kind is a string value representing the REST resource this object represents
+# Service is a named abstraction of software service
+kind: Service
+
+metadata:
+  # Name of the service
+  name: mongo
+  # Deployment namespace
+  namespace: karsajobs-ns
+  # Map of string keys and values that can be used to organize and categorize (scope and select) objects.
+  labels:
+    app: mongo
+
+spec:
+  # Label selector for pods
+  selector:
+    app: mongo
+  # The list of ports that are exposed by this service.
+  ports:
+  # The port that will be exposed by this service.
+  - port: 27017
+  # IP address of the service and is usually assigned randomly
+  clusterIP: None

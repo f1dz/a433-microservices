@@ -1,0 +1,56 @@
+# API version
+apiVersion: apps/v1
+
+# Kind is a string value representing the REST resource this object represents
+# "Deployment" enables declarative updates for Pods and ReplicaSets.
+kind: Deployment
+
+metadata:
+  # Name of the Deployment
+  name: karsajobs-ui
+  # Deployment namespace
+  namespace: karsajobs-ns
+  # Label of the Deployment
+  labels:
+    app: frontend
+
+spec:
+  # Number of desired pods. This is a pointer to distinguish between explicit zero and not specified. Defaults to 1.
+  replicas: 1
+  # Label selector for pods
+  selector:
+    matchLabels:
+      app: frontend
+
+  # Template describes the pods that will be created.
+  template:
+    metadata:
+      labels:
+        app: frontend
+
+    spec:
+      # List of containers belonging to the pod
+      containers:
+      # Name of the container
+      - name: karsajobs-ui
+        # Image to be used for container
+        image: ghcr.io/f1dz/karsajobs-ui:latest
+        # Image pull policy. "IfNotPresent" means that kubelet pulls if the image isn't present on disk
+        imagePullPolicy: IfNotPresent
+        # Compute Resources required by this container
+        resources:
+          #Limits describes the maximum amount of compute resources allowed
+          limits:
+            # Memory/RAM to be used. "1Gi" means 1 Gigabytes
+            memory: "1Gi"
+            # CPU size to be used. "750m" means only use 3/4 from CPU size
+            cpu: "750m"
+        # List of ports to expose from the container
+        ports:
+        # Number of port to expose on the pod's IP address
+        - containerPort: 8000
+        # List of environment variables to set in the container
+        env:
+          - name: VUE_APP_BACKEND
+            # Change this value to IP and port where your backend is running on
+            value: http://127.0.0.1:51252

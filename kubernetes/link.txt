@@ -1,0 +1,7 @@
+Link Images Github Package:
+
+Backend:
+https://github.com/f1dz/karsajobs-backend/pkgs/container/karsajobs
+
+Frontend:
+https://github.com/f1dz/karsajobs-frontend/pkgs/container/karsajobs-ui

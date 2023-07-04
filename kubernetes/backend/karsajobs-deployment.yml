@@ -1,0 +1,76 @@
+# API version
+apiVersion: apps/v1
+
+# Kind is a string value representing the REST resource this object represents
+# "Deployment" enables declarative updates for Pods and ReplicaSets.
+kind: Deployment
+
+metadata:
+
+  # Deployment name
+  name: karsajobs
+
+  # Deployment namespace
+  namespace: karsajobs-ns
+
+  # Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services.
+  labels:
+    app: backend
+spec:
+
+  # Number of desired pods. This is a pointer to distinguish between explicit zero and not specified. Defaults to 1.
+  replicas: 3
+
+  # Label selector for pods
+  selector:
+    matchLabels:
+      app: backend
+
+  # Template describes the pods that will be created.
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+
+      # List of containers belonging to the pod
+      containers:
+      
+      # Name of the container
+      - name: karsajobs
+        # Image to be used for container
+        image: ghcr.io/f1dz/karsajobs:latest
+        # Image pull policy. "IfNotPresent" means that kubelet pulls if the image isn't present on disk
+        imagePullPolicy: IfNotPresent
+        # Compute Resources required by this container
+        resources:
+          # Limits describes the maximum amount of compute resources allowed
+          limits:
+            # CPU size to be used. "250m" means only use 1/4 from CPU size
+            cpu: "250m"
+            # Memory/RAM to be used. "256Mi" means 256 Megabytes
+            memory: "256Mi"
+        # List of ports to expose from the container
+        ports:
+        # Number of port to expose on the pod's IP address
+        - containerPort: 8080
+        # List of environment variables to set in the container
+        env:
+          - name: APP_PORT
+            value: "8080"
+          - name: MONGO_HOST
+            value: mongo
+          - name: MONGO_USER
+            # Source for the environment variable's value
+            valueFrom:
+              # Selects a key of a secret in the pod's namespace
+              secretKeyRef:
+                name: mongo-secret
+                key: MONGO_ROOT_USERNAME
+          - name: MONGO_PASS
+            # Source for the environment variable's value
+            valueFrom:
+              # Selects a key of a secret in the pod's namespace
+              secretKeyRef:
+                name: mongo-secret
+                key: MONGO_ROOT_PASSWORD

@@ -1,0 +1,25 @@
+# API version
+apiVersion: v1
+
+# Kind is a string value representing the REST resource this object represents
+# Service is a named abstraction of software service
+kind: Service
+
+metadata:
+  # Name of the service
+  name: karsajobs
+  # Deployment namespace
+  namespace: karsajobs-ns
+  # Map of string keys and values that can be used to organize and categorize (scope and select) objects.
+  labels:
+    app: backend
+spec:
+  # Label selector for pods
+  selector:
+    app: backend
+  # The list of ports that are exposed by this service.
+  ports:
+  # The port that will be exposed by this service.
+  - port: 8080
+  # Type of the service to be exposed
+  type: NodePort

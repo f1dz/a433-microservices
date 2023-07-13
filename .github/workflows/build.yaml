@@ -5,7 +5,7 @@ on:
         types: [published]
 env:
     REGISTRY: ghcr.io
-    IMAGE_NAME: f1dz/order-service
+    IMAGE_NAME: f1dz/shipping-service
 jobs:
     publish-image:
         runs-on: ubuntu-latest

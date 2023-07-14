@@ -1,0 +1,62 @@
+# Service Account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: order-service
+  namespace: final-project
+  labels:
+    account: order-service
+---
+# Deployment for Order Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: final-project
+  labels:
+    app: order-service
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: order-service
+        version: v1
+    spec:
+      serviceAccountName: order-service
+      containers:
+      - name: order-service
+        image: ghcr.io/f1dz/order-service
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000
+        env: 
+          - name: PORT
+            value: "3000"
+          - name: AMQP_URL
+            value: "amqp://user:TBV9WE00vf@rabbitmq.final-project:5672"
+---
+# Service for order-service
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: final-project
+  labels:
+    app: order-service
+    service: order-service
+spec:
+  selector:
+    app: order-service
+  ports:
+  - port: 3000
+    name: http
+  type: NodePort

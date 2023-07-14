@@ -1,0 +1,7 @@
+Order Service:
+Link: https://github.com/users/f1dz/packages/container/package/order-service
+Image: ghcr.io/f1dz/order-service:latest
+
+Shipping Service
+Link: https://github.com/users/f1dz/packages/container/package/shipping-service
+Image: ghcr.io/f1dz/shipping-service:latest

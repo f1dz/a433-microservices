@@ -1,0 +1,7 @@
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: final-project
+  labels:
+    app: final-project

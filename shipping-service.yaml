@@ -1,0 +1,58 @@
+# Service Account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: shipping-service
+  namespace: final-project
+  labels:
+    account: shipping-service
+---
+# Deployment for Shipping Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping-service
+  namespace: final-project
+  labels:
+    app: shipping-service
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: shipping-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: shipping-service
+        version: v1
+    spec:
+      serviceAccountName: shipping-service
+      containers:
+      - name: shipping-service
+        image: ghcr.io/f1dz/shipping-service
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3001
+        env: 
+          - name: PORT
+            value: "3001"
+          - name: AMQP_URL
+            value: "amqp://user:TBV9WE00vf@rabbitmq.final-project:5672"
+---
+# Service for shipping-service
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping-service
+  namespace: final-project
+spec:
+  selector:
+    app: shipping-service
+  ports:
+  - port: 3001
+  type: NodePort

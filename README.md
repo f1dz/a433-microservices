@@ -1,2 +1,14 @@
-# a433-microservices
-Repository ini digunakan untuk kebutuhan kelas Belajar Membangun Arsitektur Microservices
+How To Deploy
+=============
+Simply by run
+```sh
+make deploy
+```
+
+Thats it!
+
+Screenshots
+----------
+![Kubernetes Services](/img/k8s-services.png)
+
+![istio Dashboard](/img/istio-dashboard.png)
